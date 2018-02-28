@@ -18,5 +18,7 @@ QUnit.test("Parses out imports", function(assert){
 QUnit.test("importDeclarations provides the import line", function(assert){
 	var ast = parse(`<can-import from="one"/>
 	<can-import from="two"/>`);
-	debugger;
+	var f = ast.importDeclarations[1];
+	assert.equal(f.specifier, "two", "got the right one");
+	assert.equal(f.loc.line, 2, "on line 2");
 });

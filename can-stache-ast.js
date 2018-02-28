@@ -38,7 +38,7 @@ exports.parse = function(filename, source){
 			loc: {
 				line: line
 			}
-		})
+		});
 	}
 
 	var program = parser(template, {
