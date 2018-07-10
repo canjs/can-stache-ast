@@ -1,3 +1,4 @@
+"use strict";
 var controls = require("./controls");
 var parser = require('can-view-parser');
 
