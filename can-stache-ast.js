@@ -16,13 +16,15 @@ exports.parse = function(filename, source){
 		dynamicImports = [],
 		importDeclarations = [],
 		ases = {},
+		attributes = new Map(),
 		inImport = false,
 		inFrom = false,
 		inAs = false,
 		isUnary = false,
 		importIsDynamic = false,
 		currentAs = "",
-		currentFrom = "";
+		currentFrom = "",
+		currentAttrName = null;
 
 	function processImport(line) {
 		if(currentAs) {
@@ -38,8 +40,12 @@ exports.parse = function(filename, source){
 			specifier: currentFrom,
 			loc: {
 				line: line
-			}
+			},
+			attributes: attributes
 		});
+
+		// Reset this scope value so that the next import gets new attributes.
+		attributes = new Map();
 	}
 
 	var program = parser(template, {
@@ -59,6 +65,10 @@ exports.parse = function(filename, source){
 			}
 		},
 		attrStart: function( attrName ){
+			currentAttrName = attrName;
+			// Default to a boolean attribute, the attrValue hook will replace that.
+			attributes.set(currentAttrName, true);
+
 			if(attrName === "from") {
 				inFrom = true;
 			} else if(attrName === "as" || attrName === "export-as") {
@@ -73,6 +83,9 @@ exports.parse = function(filename, source){
 			}
 		},
 		attrValue: function( value ){
+			if(inImport) {
+				attributes.set(currentAttrName, value);
+			}
 			if(inFrom && inImport) {
 				currentFrom = value;
 			} else if(inAs && inImport) {
