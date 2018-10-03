@@ -22,3 +22,13 @@ QUnit.test("importDeclarations provides the import line", function(assert){
 	assert.equal(f.specifier, "two", "got the right one");
 	assert.equal(f.loc.line, 2, "on line 2");
 });
+
+QUnit.test("importDeclarations includes the attributes", function(assert){
+	var ast = parse(`<can-import from="one" export-as="viewModel" route-data="routeData" />`);
+	var attrs = ast.importDeclarations[0].attributes;
+
+	assert.ok(attrs instanceof Map, "is a Map");
+	assert.equal(attrs.get("from"), "one", "the from is defined");
+	assert.equal(attrs.get("export-as"), "viewModel", "got the viewModel");
+	assert.equal(attrs.get("route-data"), "routeData", "got the routeData");
+});
